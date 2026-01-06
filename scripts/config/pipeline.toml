@@ -1,0 +1,123 @@
+[movie]
+mode = "all"      # "single" or "all"
+active = "AkariKshanam"
+
+
+[movies.AkariKshanam]
+frames_subdir = "AkariKshanam"
+actors = ["bhanu_chander", "suresh", "ashwini", "nutan_prasad"]
+
+[movies.AkariKshanam.actor_embedding_files]
+bhanu_chander = "bhanuchander_actor_closeup.pkl"
+suresh        = "suresh_actor_closeup.pkl"
+ashwini       = "ashwini_actor_closeup.pkl"
+nutan_prasad  = "nutanprasad_actor_closeup.pkl"
+
+[movies.AkariKshanam.actor_display_names]
+bhanu_chander = "Bhanu Chander"
+suresh        = "Suresh"
+ashwini       = "Ashwini"
+nutan_prasad  = "Nutan Prasad"
+
+
+[movies.AinthaamPadai]
+frames_subdir = "AinthaamPadai"
+actors = ["sundar_c", "vivek", "nassar", "simran"]
+
+[movies.AinthaamPadai.actor_embedding_files]
+sundar_c = "sundarc_actor_closeup.pkl"
+vivek    = "vivek_actor_closeup.pkl"
+nassar   = "nassar_actor_closeup.pkl"
+simran   = "simran_actor_closeup.pkl"
+
+[movies.AinthaamPadai.actor_display_names]
+sundar_c = "Sundar C"
+vivek    = "Vivek"
+nassar   = "Nassar"
+simran   = "Simran"
+
+
+[paths]
+frames_root = "/mnt/data0/PArun/Quality_checklist/dataset/all_frames/Dec_17"
+actor_dir   = "/mnt/data0/data0/mouryesh/actor_tagging/actor_embeddings"
+
+base_out = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}"
+
+faces_dir  = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/faces"
+faces_done = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/faces/_DONE"
+
+# NPY shards used by pipeline
+emb_dir    = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/embeddings"
+emb_done   = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/embeddings/_DONE"
+
+# PKL shards saved for future use
+emb_pkl_dir = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/embeddings_pkl"
+
+assign_dir  = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/assignments"
+assign_done = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/assignments/_DONE"
+
+metadata_dir  = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/metadata"
+metadata_done = "/mnt/data0/data0/mouryesh/actor_tagging/outputs/{movie}/metadata/_DONE"
+
+viz_out_dir = "/mnt/data0/data0/mouryesh/actor_tagging/visualize/output/{movie}"
+
+
+[gpu]
+use_cuda = true
+device_ids = [4, 5]   # set your GPUs here
+gpus_per_actor = 1
+max_actors = 0        # 0 => all visible GPUs
+
+
+[face_detection]
+enabled = true
+yolo_model_path = "/mnt/data0/data0/mouryesh/actor_tagging/yolov12n-face.pt"
+imgsz = 640
+conf = 0.25
+valid_exts = [".jpg", ".jpeg", ".png", ".webp"]
+
+batch_size_images = 512
+max_in_flight_batches = 256
+drain_batch_count = 64
+
+num_cpus_per_actor = 12
+prefetch_threads = 24
+
+
+[embedding]
+enabled = true
+insightface_model_pack = "buffalo_l"
+det_size = [640, 640]
+
+faces_per_part = 50000
+max_images = 0
+
+num_cpus_per_actor = 12
+prefetch_threads = 24
+max_in_flight_batches = 128
+drain_batch_count = 32
+
+# ✅ save PKL shards (aligned with NPY shards)
+export_pkl = true
+pkl_protocol = 4
+
+
+[actor_assign]
+enabled = true
+unknown_label = "unknown"
+max_faces = 0
+similarity_threshold = 0.0
+
+
+[metadata]
+enabled = true
+similarity_threshold = 0.0
+keep_unknown = false
+
+
+[resume]
+enabled = true
+face_detection = true
+embedding_generation = true
+actor_assign = true
+metadata_generation = true
